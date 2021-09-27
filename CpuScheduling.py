@@ -9,6 +9,8 @@ def FCFS(AT, BT):
     TAT = []  # CT - AT
     WT = []  # TAT - BT
 
+    # to sort all the list WRT AT
+
     # To convert string type AT to int type
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
@@ -63,9 +65,10 @@ def FCFS(AT, BT):
 
     # Labelling tickes of y-axis
     gnt.set_yticklabels(ytickL)
-    plt.show()
+    # plt.show()
 
     # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
+    # To create a table
     # take the data
 
     class Table:
@@ -81,13 +84,10 @@ def FCFS(AT, BT):
                     self.e.grid(row=i, column=j)
                     self.e.insert(END, lst[i][j])
 
-    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]  # To add the titles of the table
 
     for i in range(0, len(AT)):
-        lst.append([ytickL[i], AT[i], BT[i], CT[i], TAT[i], WT[i]])
-        # (ytickL[0], AT[0], BT[0], CT[0], TAT[0], WT[0]),
-        # (ytickL[1], AT[1], BT[1], CT[1], TAT[1], WT[1]),
-        # (ytickL[2], AT[2], BT[2], CT[2], TAT[2], WT[2])]
+        lst.append([ytickL[i], AT[i], BT[i], CT[i], TAT[i], WT[i]])   # to add all the values in a table
 
     print(lst)
 
@@ -99,10 +99,8 @@ def FCFS(AT, BT):
     # create root window
     root = Tk()
     t = Table(root)
+    plt.show()
     root.mainloop()
-    # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
-
-    # Python program to create a table
 
 
 # ----------------------------------------------------------------------------------------------------------------------
