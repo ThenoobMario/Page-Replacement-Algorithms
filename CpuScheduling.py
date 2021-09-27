@@ -66,6 +66,43 @@ def FCFS(AT, BT):
     plt.show()
 
     # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
+    # take the data
+
+    class Table:
+
+        def __init__(self, root):
+
+            # code for creating table
+            for i in range(total_rows):
+                for j in range(total_columns):
+                    self.e = Entry(root, width=10, fg='blue',
+                                   font=('Arial', 16, 'bold'))
+
+                    self.e.grid(row=i, column=j)
+                    self.e.insert(END, lst[i][j])
+
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+
+    for i in range(0, len(AT)):
+        lst.append([ytickL[i], AT[i], BT[i], CT[i], TAT[i], WT[i]])
+        # (ytickL[0], AT[0], BT[0], CT[0], TAT[0], WT[0]),
+        # (ytickL[1], AT[1], BT[1], CT[1], TAT[1], WT[1]),
+        # (ytickL[2], AT[2], BT[2], CT[2], TAT[2], WT[2])]
+
+    print(lst)
+
+    # find total number of rows and
+    # columns in list
+    total_rows = len(lst)
+    total_columns = len(lst[0])
+
+    # create root window
+    root = Tk()
+    t = Table(root)
+    root.mainloop()
+    # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
+
+    # Python program to create a table
 
 
 # ----------------------------------------------------------------------------------------------------------------------
