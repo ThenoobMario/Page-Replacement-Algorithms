@@ -15,6 +15,14 @@ def FCFS(AT, BT):
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
 
+    # Sorting Values of AT and BT 
+    inputTable = pd.DataFrame({'AT': AT, 'BT': BT})
+    inputTable = inputTable.sort_values(by = ['AT'])
+
+    AT = list(inputTable['AT'])
+    BT = list(inputTable['BT'])
+    PID = inputTable.index # Gets the index of the table
+    
     timeCpu = 0
 
     yticks = []  # This is to store the bartick values
@@ -48,7 +56,7 @@ def FCFS(AT, BT):
         yticks.append(
             barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
 
-        ytickL.append("P{}".format(i + 1))  # formatting to show P1,P2,P3...
+        ytickL.append("P{}".format(PID[i] + 1))  # formatting to show P1,P2,P3...
 
         barHeightVar += 3  # thickness is 2 and extra 1 for spacing
 
@@ -79,17 +87,30 @@ def FCFS(AT, BT):
             for i in range(total_rows):
                 for j in range(total_columns):
                     self.e = Entry(root, width=10, fg='blue',
-                                   font=('Arial', 16, 'bold'))
+                                   font=('Centuary Gothic', 16, 'bold'))
 
                     self.e.grid(row=i, column=j)
                     self.e.insert(END, lst[i][j])
 
-    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]  # To add the titles of the table
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+
+    # Making a dataframe to sort the values based on processes
+    outTable = pd.DataFrame({'PROCESS': ytickL, 'AT': AT, 'BT': BT, 'CT': CT,
+                            'TAT': TAT, 'WT': WT})
+
+    outTable = outTable.sort_values(by = ['PROCESS'])
+
+    # Converting the columns to lists 
+    PROCESS = list(outTable['PROCESS'])
+    AT = list(outTable['AT'])
+    BT = list(outTable['BT'])
+    CT = list(outTable['CT'])
+    TAT = list(outTable['TAT'])
+    WT = list(outTable['WT'])
 
     for i in range(0, len(AT)):
-        lst.append([ytickL[i], AT[i], BT[i], CT[i], TAT[i], WT[i]])   # to add all the values in a table
-
-    print(lst)
+        lst.append([PROCESS[i], AT[i], BT[i], 
+                    CT[i], TAT[i], WT[i]])   # to add all the values in a table
 
     # find total number of rows and
     # columns in list
