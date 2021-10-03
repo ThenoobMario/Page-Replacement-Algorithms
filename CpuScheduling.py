@@ -22,6 +22,7 @@ class Table:
 
                     self.e.grid(row=i, column=j)
                     self.e.insert(END, lst[i][j])
+
 def FCFS(AT, BT):
     # All list of same size where same index represents qualities of one process
     CT = []  # Completion time or the time at which process is finished execution
@@ -96,7 +97,6 @@ def FCFS(AT, BT):
     # plt.show()
 
     # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
-
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
@@ -233,7 +233,6 @@ def SJF(AT, BT):
     plt.show()
     root.mainloop()
 
-
 def Visualise(option, AT, BT):
     if option == "FCFS":
         FCFS(AT, BT)
@@ -277,7 +276,7 @@ BTList.pack()
 
 L5 = Button(F1, borderwidth="0", text="Visualise", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca",
-            command=lambda: FCFS(ATList.get().split(" "), BTList.get().split(" "))).pack(pady="25")
+            command=lambda: Visualise(variable.get(), ATList.get().split(" "), BTList.get().split(" "))).pack(pady="25")
 
 L6 = Button(F1, borderwidth="0", text="Compare All Algorithms", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca").pack()
