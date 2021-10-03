@@ -1,10 +1,30 @@
 from tkinter import *
 import pandas as pd
+import subprocess
 import matplotlib.pyplot as plt
 
+def theory():
+    file1 = "python Theory.py"
+    # os.system(file1)
+    p = subprocess.Popen(file1, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    
+# A class for creating Tables in the GUI
+class Table:
+
+        def __init__(self, root, total_rows, total_columns, lst):
+
+            # code for creating table
+            for i in range(total_rows):
+                for j in range(total_columns):
+                    self.e = Entry(root, width=10, fg='blue',
+                                   font=('Centuary Gothic', 16, 'bold'))
+
+                    self.e.grid(row=i, column=j)
+                    self.e.insert(END, lst[i][j])
 
 def FCFS(AT, BT):
-    # all list of same size where same index represents qualities of one process
+    # All list of same size where same index represents qualities of one process
     CT = []  # Completion time or the time at which process is finished execution
     TAT = []  # CT - AT
     WT = []  # TAT - BT
@@ -77,22 +97,6 @@ def FCFS(AT, BT):
     # plt.show()
 
     # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
-    # To create a table
-    # take the data
-
-    class Table:
-
-        def __init__(self, root):
-
-            # code for creating table
-            for i in range(total_rows):
-                for j in range(total_columns):
-                    self.e = Entry(root, width=10, fg='blue',
-                                   font=('Centuary Gothic', 16, 'bold'))
-
-                    self.e.grid(row=i, column=j)
-                    self.e.insert(END, lst[i][j])
-
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
@@ -120,7 +124,7 @@ def FCFS(AT, BT):
 
     # create root window
     root = Tk()
-    t = Table(root)
+    t = Table(root, total_rows, total_columns, lst)
     plt.show()
     root.mainloop()
 
@@ -197,25 +201,6 @@ def SJF(AT, BT):
     # Labelling tickes of y-axis
     gnt.set_yticklabels(ytickL)
 
-    # plt.show()
-
-    # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
-    # To create a table
-    # take the data
-
-    class Table:
-
-        def __init__(self, root):
-
-            # code for creating table
-            for i in range(total_rows):
-                for j in range(total_columns):
-                    self.e = Entry(root, width=10, fg='blue',
-                                   font=('Centuary Gothic', 16, 'bold'))
-
-                    self.e.grid(row=i, column=j)
-                    self.e.insert(END, lst[i][j])
-
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
@@ -244,17 +229,15 @@ def SJF(AT, BT):
 
     # create root window
     root = Tk()
-    t = Table(root)
+    t = Table(root, total_rows, total_columns, lst)
     plt.show()
     root.mainloop()
-
 
 def Visualise(option, AT, BT):
     if option == "FCFS":
         FCFS(AT, BT)
     elif option == "SJF":
         SJF(AT, BT)
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Main Page
@@ -300,7 +283,7 @@ L6 = Button(F1, borderwidth="0", text="Compare All Algorithms", bg="#e8e8e8", fg
 # command=lambda: graph(ATList.get(), BTList.get()))
 
 L7 = Button(F1, borderwidth="0", text="Theory", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-            activeforeground="black", activebackground="#bbbfca").pack(pady="25")
+            activeforeground="black", activebackground="#bbbfca", command=theory).pack(pady="25")
 
 L8 = Button(F1, borderwidth="0", text="Back", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca", command=Menu.destroy).pack()
