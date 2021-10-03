@@ -8,20 +8,19 @@ def theory():
     # os.system(file1)
     p = subprocess.Popen(file1, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
-    
+
 # A class for creating Tables in the GUI
 class Table:
+    def __init__(self, root, total_rows, total_columns, lst):
 
-        def __init__(self, root, total_rows, total_columns, lst):
-
-            # code for creating table
-            for i in range(total_rows):
-                for j in range(total_columns):
-                    self.e = Entry(root, width=10, fg='blue',
+        # code for creating table
+        for i in range(total_rows):
+            for j in range(total_columns):
+                self.e = Entry(root, width=10, fg='blue',
                                    font=('Centuary Gothic', 16, 'bold'))
 
-                    self.e.grid(row=i, column=j)
-                    self.e.insert(END, lst[i][j])
+                self.e.grid(row=i, column=j)
+                self.e.insert(END, lst[i][j])
 
 def FCFS(AT, BT):
     # All list of same size where same index represents qualities of one process

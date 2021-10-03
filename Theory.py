@@ -116,9 +116,11 @@ Button4 = Button(f1, text="Most Recently Used", borderwidth="0", bg="#e8e8e8", f
 Button5 = Button(f1, text="Optimal PRA", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
                  activeforeground="black", activebackground="#bbbfca", command=five).pack()
 Button6 = Button(f1, text="Random PRA", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-                 activeforeground="black", activebackground="#bbbfca", command=six).pack(pady="30")
+                 activeforeground="black", activebackground="#bbbfca", command=six).pack()
 button7 = Button(f1, text="FCFS", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-                 activeforeground="black", activebackground="#bbbfca", command=seven).pack(pady="30")
-Button8 = Button(f1, text="Back", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
+                 activeforeground="black", activebackground="#bbbfca", command=seven).pack()
+button8 = Button(f1, text="SJF", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
+                 activeforeground="black", activebackground="#bbbfca", command=seven).pack()
+Button9 = Button(f1, text="Back", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
                  activeforeground="black", activebackground="#bbbfca", command=Menu.destroy).pack()
 Menu.mainloop()
