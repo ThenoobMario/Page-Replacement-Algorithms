@@ -1,7 +1,13 @@
 from tkinter import *
 import pandas as pd
+import subprocess
 import matplotlib.pyplot as plt
 
+def theory():
+    file1 = "python Theory.py"
+    # os.system(file1)
+    p = subprocess.Popen(file1, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
 
 def FCFS(AT, BT):
     # all list of same size where same index represents qualities of one process
@@ -149,7 +155,7 @@ L6 = Button(F1, borderwidth="0", text="Compare All Algorithms", bg="#e8e8e8", fg
 # command=lambda: graph(ATList.get(), BTList.get()))
 
 L7 = Button(F1, borderwidth="0", text="Theory", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-            activeforeground="black", activebackground="#bbbfca").pack(pady="25")
+            activeforeground="black", activebackground="#bbbfca",command=theory).pack(pady="25")
 
 L8 = Button(F1, borderwidth="0", text="Back", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca", command=Menu.destroy).pack()
