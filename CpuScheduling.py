@@ -15,14 +15,14 @@ def FCFS(AT, BT):
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
 
-    # Sorting Values of AT and BT 
+    # Sorting Values of AT and BT
     inputTable = pd.DataFrame({'AT': AT, 'BT': BT})
-    inputTable = inputTable.sort_values(by = ['AT'])
+    inputTable = inputTable.sort_values(by=['AT'])
 
     AT = list(inputTable['AT'])
     BT = list(inputTable['BT'])
-    PID = inputTable.index # Gets the index of the table
-    
+    PID = inputTable.index  # Gets the index of the table
+
     timeCpu = 0
 
     yticks = []  # This is to store the bartick values
@@ -50,7 +50,7 @@ def FCFS(AT, BT):
         WT.append(TAT[i] - BT[i])
 
         # print(AT[i], BT[i])
-        gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')   # here we want startingTime
+        gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
         # of process (storeThis) + The time taken for the process (BT)
 
         yticks.append(
@@ -73,6 +73,7 @@ def FCFS(AT, BT):
 
     # Labelling tickes of y-axis
     gnt.set_yticklabels(ytickL)
+
     # plt.show()
 
     # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
@@ -96,11 +97,11 @@ def FCFS(AT, BT):
 
     # Making a dataframe to sort the values based on processes
     outTable = pd.DataFrame({'PROCESS': ytickL, 'AT': AT, 'BT': BT, 'CT': CT,
-                            'TAT': TAT, 'WT': WT})
+                             'TAT': TAT, 'WT': WT})
 
-    outTable = outTable.sort_values(by = ['PROCESS'])
+    outTable = outTable.sort_values(by=['PROCESS'])
 
-    # Converting the columns to lists 
+    # Converting the columns to lists
     PROCESS = list(outTable['PROCESS'])
     AT = list(outTable['AT'])
     BT = list(outTable['BT'])
@@ -109,8 +110,8 @@ def FCFS(AT, BT):
     WT = list(outTable['WT'])
 
     for i in range(0, len(AT)):
-        lst.append([PROCESS[i], AT[i], BT[i], 
-                    CT[i], TAT[i], WT[i]])   # to add all the values in a table
+        lst.append([PROCESS[i], AT[i], BT[i],
+                    CT[i], TAT[i], WT[i]])  # to add all the values in a table
 
     # find total number of rows and
     # columns in list
@@ -122,6 +123,137 @@ def FCFS(AT, BT):
     t = Table(root)
     plt.show()
     root.mainloop()
+
+
+def SJF(AT, BT):
+    # all list of same size where same index represents qualities of one process
+    CT = []  # Completion time or the time at which process is finished execution
+    TAT = []  # CT - AT
+    WT = []  # TAT - BT
+
+    # to sort all the list WRT AT
+
+    # To convert string type AT to int type
+    AT = [int(i) for i in AT]
+    BT = [int(i) for i in BT]
+
+    # Sorting Values of AT and BT
+    inputTable = pd.DataFrame({'AT': AT, 'BT': BT})
+    inputTable = inputTable.sort_values(by=['AT'])
+    inputTable = inputTable.sort_values(by=['BT'])
+
+    AT = list(inputTable['AT'])
+    BT = list(inputTable['BT'])
+    PID = inputTable.index  # Gets the index of the table
+
+    timeCpu = 0
+
+    yticks = []  # This is to store the bartick values
+    ytickL = []  # This is to store the bartick lables
+
+    barHeightVar = 1
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
+
+    for i in range(0, len(AT)):
+        # to make up for idle CPU time
+        while AT[i] > timeCpu:
+            timeCpu += 1
+        # Calculating CT by adding Current CPU time and BT
+
+        storeThis = timeCpu  # This variable will store the starting time of the i'th process
+
+        timeCpu += BT[i]
+        CT.append(timeCpu)
+
+        TAT.append(CT[i] - AT[i])
+        WT.append(TAT[i] - BT[i])
+
+        # print(AT[i], BT[i])
+        gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
+        # of process (storeThis) + The time taken for the process (BT)
+
+        yticks.append(
+            barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
+
+        ytickL.append("P{}".format(PID[i] + 1))  # formatting to show P1,P2,P3...
+
+        barHeightVar += 3  # thickness is 2 and extra 1 for spacing
+
+    print(CT, TAT, WT)
+
+    # Setting Y-axis limits 2 more than the list size
+    gnt.set_ylim(0, (len(AT) + 2) * 3)
+
+    # Setting X-axis limits last plus five
+    gnt.set_xlim(0, CT[-1] + 5)
+
+    # Setting ticks on y-axis
+    gnt.set_yticks(yticks)
+
+    # Labelling tickes of y-axis
+    gnt.set_yticklabels(ytickL)
+
+    # plt.show()
+
+    # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
+    # To create a table
+    # take the data
+
+    class Table:
+
+        def __init__(self, root):
+
+            # code for creating table
+            for i in range(total_rows):
+                for j in range(total_columns):
+                    self.e = Entry(root, width=10, fg='blue',
+                                   font=('Centuary Gothic', 16, 'bold'))
+
+                    self.e.grid(row=i, column=j)
+                    self.e.insert(END, lst[i][j])
+
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+
+    # Making a dataframe to sort the values based on processes
+    outTable = pd.DataFrame({'PROCESS': ytickL, 'AT': AT, 'BT': BT, 'CT': CT,
+                             'TAT': TAT, 'WT': WT})
+
+    outTable = outTable.sort_values(by=['PROCESS'])
+    outTable = outTable.sort_values(by=['AT'])
+
+    # Converting the columns to lists
+    PROCESS = list(outTable['PROCESS'])
+    AT = list(outTable['AT'])
+    BT = list(outTable['BT'])
+    CT = list(outTable['CT'])
+    TAT = list(outTable['TAT'])
+    WT = list(outTable['WT'])
+
+    for i in range(0, len(AT)):
+        lst.append([PROCESS[i], AT[i], BT[i],
+                    CT[i], TAT[i], WT[i]])  # to add all the values in a table
+
+    # find total number of rows and
+    # columns in list
+    total_rows = len(lst)
+    total_columns = len(lst[0])
+
+    # create root window
+    root = Tk()
+    t = Table(root)
+    plt.show()
+    root.mainloop()
+
+
+def Visualise(option, AT, BT):
+    if option == "FCFS":
+        FCFS(AT, BT)
+    elif option == "SJF":
+        SJF(AT, BT)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -161,7 +293,7 @@ BTList.pack()
 
 L5 = Button(F1, borderwidth="0", text="Visualise", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca",
-            command=lambda: FCFS(ATList.get().split(" "), BTList.get().split(" "))).pack(pady="25")
+            command=lambda: Visualise(variable.get(), ATList.get().split(" "), BTList.get().split(" "))).pack(pady="25")
 
 L6 = Button(F1, borderwidth="0", text="Compare All Algorithms", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca").pack()
