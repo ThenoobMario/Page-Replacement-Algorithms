@@ -3,11 +3,13 @@ import pandas as pd
 import subprocess
 import matplotlib.pyplot as plt
 
+
 def theory():
     file1 = "python Theory.py"
     # os.system(file1)
     p = subprocess.Popen(file1, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
+
 
 # A class for creating Tables in the GUI
 class Table:
@@ -17,10 +19,11 @@ class Table:
         for i in range(total_rows):
             for j in range(total_columns):
                 self.e = Entry(root, width=10, fg='blue',
-                                   font=('Centuary Gothic', 16, 'bold'))
+                               font=('Centuary Gothic', 16, 'bold'))
 
                 self.e.grid(row=i, column=j)
                 self.e.insert(END, lst[i][j])
+
 
 def FCFS(AT, BT):
     # All list of same size where same index represents qualities of one process
@@ -157,7 +160,7 @@ def SJF(AT, BT):
     # Setting labels for x-axis and y-axis
     gnt.set_xlabel('Time')
     gnt.set_ylabel('Processes')
-    
+
     execList = AT
 
     for i in range(1, len(AT)):
@@ -240,13 +243,20 @@ def SJF(AT, BT):
     plt.show()
     root.mainloop()
 
-def roundRobin(AT, BT, timeQ = 2):
+
+def roundRobin(AT, BT, timeQ=2):
     # Initialising time
     timeCpu = 0
-    readyQ = []
+    readyQ = []  # to check and store unfinished processes
     finalQ = []
 
+    PID = [" " for i in AT]
+
     process = []
+
+    CT = [0 for i in AT]
+    TAT = [0 for i in AT]
+    WT = [0 for i in AT]
 
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
@@ -260,7 +270,7 @@ def roundRobin(AT, BT, timeQ = 2):
             # Adding the first process in the ready queue
             readyQ.append(process.pop(0))
 
-            # If Arrival time is greater than current CPU time
+            # If Arrival time is greater than current CPU time ( in current time no processes have arrived)
             if readyQ[0]['AT'] >= timeCpu:
                 timeCpu = readyQ[0]['AT']
 
@@ -273,16 +283,50 @@ def roundRobin(AT, BT, timeQ = 2):
         else:
             timeCpu += timeQ
             currProcess['BT'] -= timeQ
-
-        for x in process:
-            if x['AT'] <= timeCpu:
+        print("Process:", process)
+        lenprocess = len(process)
+        for x in range(0, lenprocess):
+            print("Before time cpu", process[0]['AT'], timeCpu)
+            if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
 
-        # Appending all the incomplete processes back to ready queue
+        # Appending the incomplete processes back to ready queue
         if currProcess['BT'] != 0:
             readyQ.append(currProcess)
 
+        processnum = currProcess["PID"]
+
+        finalNum = int(processnum[-1]) - 1
+        CT[finalNum] = timeCpu
+        PID[finalNum] = currProcess["PID"]
+        TAT[finalNum] = CT[finalNum] - AT[finalNum]
+        WT[finalNum] = TAT[finalNum] - BT[finalNum]
         print(readyQ)
+        print(CT, TAT, WT)
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+
+    # Making a dataframe to sort the values based on processes
+    outTable = pd.DataFrame({'PROCESS': PID, 'AT': AT, 'BT': BT, 'CT': CT,
+                             'TAT': TAT, 'WT': WT})
+
+    PROCESS = list(outTable['PROCESS'])
+    AT = list(outTable['AT'])
+    BT = list(outTable['BT'])
+    CT = list(outTable['CT'])
+    TAT = list(outTable['TAT'])
+    WT = list(outTable['WT'])
+    for i in range(0, len(AT)):
+        lst.append([PROCESS[i], AT[i], BT[i],
+                    CT[i], TAT[i], WT[i]])  # to add all the values in a table
+
+        # find total number of rows and
+        # columns in list
+    total_rows = len(lst)
+    total_columns = len(lst[0])
+    root = Tk()
+    t = Table(root, total_rows, total_columns, lst)
+    root.mainloop()
+
 
 def Visualise(option, AT, BT):
     if option == "FCFS":
@@ -291,6 +335,8 @@ def Visualise(option, AT, BT):
         SJF(AT, BT)
     elif option == "RR":
         roundRobin(AT, BT, 2)
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Main Page
 Menu = Tk()
