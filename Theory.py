@@ -1,6 +1,5 @@
 from tkinter import *
 
-
 def one():
     photo_root = Toplevel()
     photo_root.title("FIFO Theory")
@@ -69,8 +68,8 @@ def six():
 
 def seven():
     photo_root = Toplevel()
-    photo_root.title("fcfs")
-    photo_root.geometry("1152x648")
+    photo_root.title("FCFS")
+    photo_root.geometry("1698x843")
     photo_root.resizable(False, False)
     photo = PhotoImage(file="Theory/Fcfs.PNG")
     photo_label = Label(photo_root, image=photo)
@@ -81,7 +80,7 @@ def seven():
 def eight():
     photo_root = Toplevel()
     photo_root.title("SJF")
-    photo_root.geometry("1152x648")
+    photo_root.geometry("1739×868")
     photo_root.resizable(False, False)
     photo = PhotoImage(file="Theory/Capture.PNG")
     photo_label = Label(photo_root, image=photo)

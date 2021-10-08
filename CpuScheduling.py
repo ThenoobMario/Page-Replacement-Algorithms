@@ -140,13 +140,10 @@ def SJF(AT, BT):
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
 
+    container = []
+
     # Sorting Values of AT and BT
     inputTable = pd.DataFrame({'AT': AT, 'BT': BT})
-    inputTable = inputTable.sort_values(by=['AT'])
-    inputTable = inputTable.sort_values(by=['BT'])
-
-    AT = list(inputTable['AT'])
-    BT = list(inputTable['BT'])
     PID = inputTable.index  # Gets the index of the table
 
     timeCpu = 0
@@ -160,16 +157,27 @@ def SJF(AT, BT):
     # Setting labels for x-axis and y-axis
     gnt.set_xlabel('Time')
     gnt.set_ylabel('Processes')
+    
+    execList = AT
 
-    for i in range(0, len(AT)):
+    for i in range(1, len(AT)):
         # to make up for idle CPU time
-        while AT[i] > timeCpu:
+        while AT[i - 1] > timeCpu:
             timeCpu += 1
+
+        firstCT = BT[i - 1]
+
+        if AT[i - 1] == AT[i]:
+            if BT[i - 1] >= BT[i]:
+                continue
+            else:
+                firstCT = BT[i]
         # Calculating CT by adding Current CPU time and BT
 
         storeThis = timeCpu  # This variable will store the starting time of the i'th process
 
         timeCpu += BT[i]
+
         CT.append(timeCpu)
 
         TAT.append(CT[i] - AT[i])
@@ -232,12 +240,57 @@ def SJF(AT, BT):
     plt.show()
     root.mainloop()
 
+def roundRobin(AT, BT, timeQ = 2):
+    # Initialising time
+    timeCpu = 0
+    readyQ = []
+    finalQ = []
+
+    process = []
+
+    AT = [int(i) for i in AT]
+    BT = [int(i) for i in BT]
+
+    for i in range(len(AT)):
+        process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
+
+    # Checkinng if there are processes present
+    while len(process) != 0 or len(readyQ) != 0:
+        if len(readyQ) == 0:
+            # Adding the first process in the ready queue
+            readyQ.append(process.pop(0))
+
+            # If Arrival time is greater than current CPU time
+            if readyQ[0]['AT'] >= timeCpu:
+                timeCpu = readyQ[0]['AT']
+
+        # Getting the active process 
+        currProcess = readyQ.pop(0)
+        # If Burst Time is less than Time quantum
+        if currProcess['BT'] <= timeQ:
+            timeCpu += currProcess['BT']
+            currProcess['BT'] = 0
+        else:
+            timeCpu += timeQ
+            currProcess['BT'] -= timeQ
+
+        for x in process:
+            if x['AT'] <= timeCpu:
+                readyQ.append(process.pop(0))
+
+        # Appending all the incomplete processes back to ready queue
+        if currProcess['BT'] != 0:
+            readyQ.append(currProcess)
+
+        print(readyQ)
+
 def Visualise(option, AT, BT):
     if option == "FCFS":
         FCFS(AT, BT)
     elif option == "SJF":
         SJF(AT, BT)
-
+    elif option == "RR":
+        roundRobin(AT, BT, 2)
 # ----------------------------------------------------------------------------------------------------------------------
 # Main Page
 Menu = Tk()
