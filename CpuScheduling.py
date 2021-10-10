@@ -132,102 +132,82 @@ def FCFS(AT, BT):
 
 
 def SJF(AT, BT):
-    # all list of same size where same index represents qualities of one process
-    CT = []  # Completion time or the time at which process is finished execution
-    TAT = []  # CT - AT
-    WT = []  # TAT - BT
+    # Initialising time
+    timeCpu = 0
+    readyQ = []  # to check and store unfinished processes
+    finalQ = []
 
-    # to sort all the list WRT AT
+    PID = [" " for i in AT]
 
-    # To convert string type AT to int type
+    process = []
+
+    CT = [0 for _ in AT]
+    TAT = [0 for _ in AT]
+    WT = [0 for _ in AT]
+
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
 
-    container = []
+    for i in range(len(AT)):
+        process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
 
-    # Sorting Values of AT and BT
-    inputTable = pd.DataFrame({'AT': AT, 'BT': BT})
-    PID = inputTable.index  # Gets the index of the table
+    # Checking if there are processes present
+    while len(process) != 0 or len(readyQ) != 0:
+        if len(readyQ) == 0:
+            lenprocess = len(process)
+            tempQ = []
+            # entering all the processes that have arrived in the readyQ
+            for x in range(0, lenprocess):
+                if process[0]['AT'] <= timeCpu:
+                    tempQ.append(process.pop(0))
 
-    timeCpu = 0
+            tempQ.sort(key=myFunc)  # sorting acc to the burst time
+            lenghtQ = len(tempQ)
+            for i in range(0, lenghtQ):
+                readyQ.append(tempQ.pop(0))  # adding the sorted queue to readyqueue
 
-    yticks = []  # This is to store the bartick values
-    ytickL = []  # This is to store the bartick lables
+            # If Arrival time is greater than current CPU time ( in current time no processes have arrived)
+            if readyQ[0]['AT'] >= timeCpu:
+                timeCpu = readyQ[0]['AT']  # then we make the timeCpu such that the 0th process has arrived
 
-    barHeightVar = 1
-    fig, gnt = plt.subplots()
+        # Getting the active process
+        currProcess = readyQ.pop(0)
 
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
+        timeCpu += currProcess['BT']
 
-    execList = AT
+        lenprocess = len(process)
+        tempQ = []
+        # entering all the processes that have arrived in the readyQ
+        for x in range(0, lenprocess):
+            if process[0]['AT'] <= timeCpu:
+                tempQ.append(process.pop(0))
 
-    for i in range(1, len(AT)):
-        # to make up for idle CPU time
-        while AT[i - 1] > timeCpu:
-            timeCpu += 1
+        tempQ.sort(key=myFunc)  # sorting acc to the burst time
+        lenghtQ = len(tempQ)
+        for i in range(0, lenghtQ):
+            readyQ.append(tempQ.pop(0))  # adding the sorted queue to readyqueue
 
-        firstCT = BT[i - 1]
+        processnum = currProcess["PID"]
 
-        if AT[i - 1] == AT[i]:
-            if BT[i - 1] >= BT[i]:
-                continue
-            else:
-                firstCT = BT[i]
-        # Calculating CT by adding Current CPU time and BT
-
-        storeThis = timeCpu  # This variable will store the starting time of the i'th process
-
-        timeCpu += BT[i]
-
-        CT.append(timeCpu)
-
-        TAT.append(CT[i] - AT[i])
-        WT.append(TAT[i] - BT[i])
-
-        # print(AT[i], BT[i])
-        gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
-        # of process (storeThis) + The time taken for the process (BT)
-
-        yticks.append(
-            barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
-
-        ytickL.append("P{}".format(PID[i] + 1))  # formatting to show P1,P2,P3...
-
-        barHeightVar += 3  # thickness is 2 and extra 1 for spacing
-
-    print(CT, TAT, WT)
-
-    # Setting Y-axis limits 2 more than the list size
-    gnt.set_ylim(0, (len(AT) + 2) * 3)
-
-    # Setting X-axis limits last plus five
-    gnt.set_xlim(0, CT[-1] + 5)
-
-    # Setting ticks on y-axis
-    gnt.set_yticks(yticks)
-
-    # Labelling tickes of y-axis
-    gnt.set_yticklabels(ytickL)
-
+        finalNum = int(processnum[-1]) - 1
+        CT[finalNum] = timeCpu
+        PID[finalNum] = currProcess["PID"]
+        TAT[finalNum] = CT[finalNum] - AT[finalNum]
+        WT[finalNum] = TAT[finalNum] - BT[finalNum]
+        print(readyQ)
+        print(CT, TAT, WT)
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
-    outTable = pd.DataFrame({'PROCESS': ytickL, 'AT': AT, 'BT': BT, 'CT': CT,
+    outTable = pd.DataFrame({'PROCESS': PID, 'AT': AT, 'BT': BT, 'CT': CT,
                              'TAT': TAT, 'WT': WT})
 
-    outTable = outTable.sort_values(by=['PROCESS'])
-    outTable = outTable.sort_values(by=['AT'])
-
-    # Converting the columns to lists
     PROCESS = list(outTable['PROCESS'])
     AT = list(outTable['AT'])
     BT = list(outTable['BT'])
     CT = list(outTable['CT'])
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
-
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -236,12 +216,13 @@ def SJF(AT, BT):
     # columns in list
     total_rows = len(lst)
     total_columns = len(lst[0])
-
-    # create root window
     root = Tk()
     t = Table(root, total_rows, total_columns, lst)
-    plt.show()
     root.mainloop()
+
+
+def myFunc(e):
+    return e['BT']
 
 
 def roundRobin(AT, BT, timeQ=2):
@@ -254,9 +235,9 @@ def roundRobin(AT, BT, timeQ=2):
 
     process = []
 
-    CT = [0 for i in AT]
-    TAT = [0 for i in AT]
-    WT = [0 for i in AT]
+    CT = [0 for _ in AT]
+    TAT = [0 for _ in AT]
+    WT = [0 for _ in AT]
 
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
@@ -264,7 +245,7 @@ def roundRobin(AT, BT, timeQ=2):
     for i in range(len(AT)):
         process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
 
-    # Checkinng if there are processes present
+    # Checking if there are processes present
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
             # Adding the first process in the ready queue
@@ -283,10 +264,10 @@ def roundRobin(AT, BT, timeQ=2):
         else:
             timeCpu += timeQ
             currProcess['BT'] -= timeQ
-        print("Process:", process)
+
         lenprocess = len(process)
+        # getting all the arrived processes in the readyQ
         for x in range(0, lenprocess):
-            print("Before time cpu", process[0]['AT'], timeCpu)
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
 
