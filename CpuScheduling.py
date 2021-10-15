@@ -75,8 +75,7 @@ def FCFS(AT, BT):
         gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
         # of process (storeThis) + The time taken for the process (BT)
 
-        yticks.append(
-            barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
+        yticks.append(barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
 
         ytickL.append("P{}".format(PID[i] + 1))  # formatting to show P1,P2,P3...
 
@@ -135,7 +134,17 @@ def SJF(AT, BT):
     # Initialising time
     timeCpu = 0
     readyQ = []  # to check and store unfinished processes
-    finalQ = []
+
+    yticks = []  # This is to store the bartick values
+    ytickL = []  # This is to store the bartick lables
+
+    barHeightVar = 1
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
+
 
     PID = [" " for i in AT]
 
@@ -148,6 +157,7 @@ def SJF(AT, BT):
     AT = [int(i) for i in AT]
     BT = [int(i) for i in BT]
 
+    # Making a list of Dictionaries
     for i in range(len(AT)):
         process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
 
@@ -182,10 +192,10 @@ def SJF(AT, BT):
             if process[0]['AT'] <= timeCpu:
                 tempQ.append(process.pop(0))
 
-        tempQ.sort(key=myFunc)  # sorting acc to the burst time
+        tempQ.sort(key=myFunc)  # Sorting acc to the burst time
         lenghtQ = len(tempQ)
         for i in range(0, lenghtQ):
-            readyQ.append(tempQ.pop(0))  # adding the sorted queue to readyqueue
+            readyQ.append(tempQ.pop(0))  # Adding the sorted queue to ready queue
 
         processnum = currProcess["PID"]
 
@@ -200,7 +210,7 @@ def SJF(AT, BT):
 
     # Making a dataframe to sort the values based on processes
     outTable = pd.DataFrame({'PROCESS': PID, 'AT': AT, 'BT': BT, 'CT': CT,
-                             'TAT': TAT, 'WT': WT})
+                             'TAT': TAT, 'WT': WT})   
 
     PROCESS = list(outTable['PROCESS'])
     AT = list(outTable['AT'])
@@ -208,16 +218,40 @@ def SJF(AT, BT):
     CT = list(outTable['CT'])
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
 
+        # Since SJF is Non-Preemptive, we can use RT and WT interchangeably
+        gnt.broken_barh([(WT[i] + AT[i], BT[i])], (barHeightVar, 2), facecolors='tab:blue')
+
+        yticks.append(barHeightVar + 1)
+
+        ytickL.append(PROCESS[i])
+
+        barHeightVar += 3
+    
+    # Setting Y-axis limits 2 more than the list size
+    gnt.set_ylim(0, (len(AT) + 2) * 3)
+
+    # Setting X-axis limits last plus five
+    gnt.set_xlim(0, CT[-1] + 5)
+
+    # Setting ticks on y-axis
+    gnt.set_yticks(yticks)
+
+    # Labelling tickes of y-axis
+    gnt.set_yticklabels(ytickL)
+    
     # find total number of rows and
     # columns in list
     total_rows = len(lst)
     total_columns = len(lst[0])
+
     root = Tk()
     t = Table(root, total_rows, total_columns, lst)
+    plt.show()
     root.mainloop()
 
 
