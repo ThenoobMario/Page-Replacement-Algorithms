@@ -75,7 +75,8 @@ def FCFS(AT, BT):
         gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
         # of process (storeThis) + The time taken for the process (BT)
 
-        yticks.append(barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
+        yticks.append(
+            barHeightVar + 1)  # thickness of bars is 2 and base starts at barHeightVar, so +1 will give us middle
 
         ytickL.append("P{}".format(PID[i] + 1))  # formatting to show P1,P2,P3...
 
@@ -143,7 +144,6 @@ def SJF(AT, BT):
     gnt.set_xlabel('Time')
     gnt.set_ylabel('Processes')
 
-
     PID = [" " for i in AT]
 
     process = []
@@ -208,7 +208,7 @@ def SJF(AT, BT):
 
     # Making a dataframe to sort the values based on processes
     outTable = pd.DataFrame({'PROCESS': PID, 'AT': AT, 'BT': BT, 'CT': CT,
-                             'TAT': TAT, 'WT': WT})   
+                             'TAT': TAT, 'WT': WT})
 
     PROCESS = list(outTable['PROCESS'])
     AT = list(outTable['AT'])
@@ -229,7 +229,7 @@ def SJF(AT, BT):
         ytickL.append(PROCESS[i])
 
         barHeightVar += 3
-    
+
     # Setting Y-axis limits 2 more than the list size
     gnt.set_ylim(0, (len(AT) + 2) * 3)
 
@@ -241,7 +241,7 @@ def SJF(AT, BT):
 
     # Labelling tickes of y-axis
     gnt.set_yticklabels(ytickL)
-    
+
     # find total number of rows and
     # columns in list
     total_rows = len(lst)
@@ -266,13 +266,12 @@ def roundRobin(AT, BT, timeQ=2):
     yticks = []  # This is to store the bartick values
     ytickL = []  # This is to store the bartick lables
 
-    barHeightVar = 1
     barHeightList = []
 
     # Loop to define the initial y-axis heights of the bars
     for i in range(len(AT)):
         if i == 0:
-            barHeightList.append(1) 
+            barHeightList.append(1)
         else:
             barHeightList.append(barHeightList[i - 1] + 3)
 
@@ -311,12 +310,12 @@ def roundRobin(AT, BT, timeQ=2):
         # If Burst Time is less than Time quantum
         if currProcess['BT'] <= timeQ:
             # Append the Process Name in an order list along with Start and Finish time
-            processOrder.append({'Task': currProcess['PID'], 'Start' : timeCpu, 'Finish' : timeCpu + currProcess['BT']})
+            processOrder.append({'Task': currProcess['PID'], 'Start': timeCpu, 'Finish': timeCpu + currProcess['BT']})
 
             timeCpu += currProcess['BT']
             currProcess['BT'] = 0
         else:
-            processOrder.append({'Task': currProcess['PID'], 'Start' : timeCpu, 'Finish' : timeCpu + timeQ})
+            processOrder.append({'Task': currProcess['PID'], 'Start': timeCpu, 'Finish': timeCpu + timeQ})
 
             timeCpu += timeQ
             currProcess['BT'] -= timeQ
@@ -333,7 +332,7 @@ def roundRobin(AT, BT, timeQ=2):
 
         processnum = currProcess["PID"]
 
-        finalNum = int(processnum[-1]) - 1
+        finalNum = int(processnum[-1]) - 1  # To extract the process number from the name p1 -> 0 p2-> 1 etc
         CT[finalNum] = timeCpu
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
@@ -369,8 +368,8 @@ def roundRobin(AT, BT, timeQ=2):
         pNo = int(P[-1]) - 1
 
         # If pNo is same, their height will be the same
-        gnt.broken_barh([(processOrder[i - 1]['Start'], processOrder[i - 1]['Finish'] - processOrder[i - 1]['Start'])], 
-                        (barHeightList[pNo], 2), facecolors = 'tab:blue')
+        gnt.broken_barh([(processOrder[i - 1]['Start'], processOrder[i - 1]['Finish'] - processOrder[i - 1]['Start'])],
+                        (barHeightList[pNo], 2), facecolors='tab:blue')
 
     # Setting Y-axis limits 2 more than the list size
     gnt.set_ylim(0, (len(AT) + 2) * 3)
@@ -383,7 +382,7 @@ def roundRobin(AT, BT, timeQ=2):
 
     # Labelling tickes of y-axis
     gnt.set_yticklabels(ytickL)
-    
+
     # find total number of rows and
     # columns in list
     total_rows = len(lst)
