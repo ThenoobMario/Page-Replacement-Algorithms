@@ -95,8 +95,6 @@ def FCFS(AT, BT):
     # Labelling tickes of y-axis
     gnt.set_yticklabels(ytickL)
 
-    # plt.show()
-
     # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
@@ -171,7 +169,7 @@ def SJF(AT, BT):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
 
-            tempQ.sort(key=myFunc)  # sorting acc to the burst time
+            tempQ.sort(key=getBT)  # sorting acc to the burst time
             lenghtQ = len(tempQ)
             for i in range(0, lenghtQ):
                 readyQ.append(tempQ.pop(0))  # adding the sorted queue to readyqueue
@@ -192,7 +190,7 @@ def SJF(AT, BT):
             if process[0]['AT'] <= timeCpu:
                 tempQ.append(process.pop(0))
 
-        tempQ.sort(key=myFunc)  # Sorting acc to the burst time
+        tempQ.sort(key=getBT)  # Sorting acc to the burst time
         lenghtQ = len(tempQ)
         for i in range(0, lenghtQ):
             readyQ.append(tempQ.pop(0))  # Adding the sorted queue to ready queue
@@ -255,7 +253,7 @@ def SJF(AT, BT):
     root.mainloop()
 
 
-def myFunc(e):
+def getBT(e):
     return e['BT']
 
 
@@ -263,7 +261,26 @@ def roundRobin(AT, BT, timeQ=2):
     # Initialising time
     timeCpu = 0
     readyQ = []  # to check and store unfinished processes
-    finalQ = []
+    processOrder = []
+
+    yticks = []  # This is to store the bartick values
+    ytickL = []  # This is to store the bartick lables
+
+    barHeightVar = 1
+    barHeightList = []
+
+    # Loop to define the initial y-axis heights of the bars
+    for i in range(len(AT)):
+        if i == 0:
+            barHeightList.append(1) 
+        else:
+            barHeightList.append(barHeightList[i - 1] + 3)
+
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
 
     PID = [" " for i in AT]
 
@@ -285,7 +302,7 @@ def roundRobin(AT, BT, timeQ=2):
             # Adding the first process in the ready queue
             readyQ.append(process.pop(0))
 
-            # If Arrival time is greater than current CPU time ( in current time no processes have arrived)
+            # If Arrival time is greater than current CPU time (in current time no processes have arrived)
             if readyQ[0]['AT'] >= timeCpu:
                 timeCpu = readyQ[0]['AT']
 
@@ -293,9 +310,14 @@ def roundRobin(AT, BT, timeQ=2):
         currProcess = readyQ.pop(0)
         # If Burst Time is less than Time quantum
         if currProcess['BT'] <= timeQ:
+            # Append the Process Name in an order list along with Start and Finish time
+            processOrder.append({'Task': currProcess['PID'], 'Start' : timeCpu, 'Finish' : timeCpu + currProcess['BT']})
+
             timeCpu += currProcess['BT']
             currProcess['BT'] = 0
         else:
+            processOrder.append({'Task': currProcess['PID'], 'Start' : timeCpu, 'Finish' : timeCpu + timeQ})
+
             timeCpu += timeQ
             currProcess['BT'] -= timeQ
 
@@ -316,6 +338,7 @@ def roundRobin(AT, BT, timeQ=2):
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
         WT[finalNum] = TAT[finalNum] - BT[finalNum]
+
         print(readyQ)
         print(CT, TAT, WT)
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
@@ -330,16 +353,45 @@ def roundRobin(AT, BT, timeQ=2):
     CT = list(outTable['CT'])
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
 
-        # find total number of rows and
-        # columns in list
+        yticks.append(barHeightList[i] + 1)
+
+        ytickL.append(PROCESS[i])
+
+    # A loop to display the gantt chart visually 
+    for i in range(1, len(processOrder) + 1):
+        # Getting the number of the process
+        P = processOrder[i - 1]['Task']
+        pNo = int(P[-1]) - 1
+
+        # If pNo is same, their height will be the same
+        gnt.broken_barh([(processOrder[i - 1]['Start'], processOrder[i - 1]['Finish'] - processOrder[i - 1]['Start'])], 
+                        (barHeightList[pNo], 2), facecolors = 'tab:blue')
+
+    # Setting Y-axis limits 2 more than the list size
+    gnt.set_ylim(0, (len(AT) + 2) * 3)
+
+    # Setting X-axis limits last plus five
+    gnt.set_xlim(0, CT[-1] + 5)
+
+    # Setting ticks on y-axis
+    gnt.set_yticks(yticks)
+
+    # Labelling tickes of y-axis
+    gnt.set_yticklabels(ytickL)
+    
+    # find total number of rows and
+    # columns in list
     total_rows = len(lst)
     total_columns = len(lst[0])
+
     root = Tk()
     t = Table(root, total_rows, total_columns, lst)
+    plt.show()
     root.mainloop()
 
 
