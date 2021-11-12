@@ -393,6 +393,7 @@ def roundRobin(AT, BT, timeQ=2):
     plt.show()
     root.mainloop()
 
+
 def HRRN(AT, BT):
     # Initialising time
     timeCpu = 0
@@ -431,7 +432,7 @@ def HRRN(AT, BT):
             for x in range(0, lenprocess):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
-            
+
             lengthQ = len(tempQ)
             for i in range(0, lengthQ):
                 readyQ.append(tempQ.pop(0))
@@ -449,18 +450,16 @@ def HRRN(AT, BT):
         for x in range(0, lenprocess):
             if process[0]['AT'] <= timeCpu:
                 tempQ.append(process.pop(0))
-        
-        HRR = ((timeCpu - readyQ[0]['AT']) + readyQ[0]['BT'])/readyQ[0]['BT']
 
-        for i in range():
-            responseRatio = ((timeCpu - readyQ[i]['AT']) + readyQ[i]['BT'])/readyQ[i]['BT']
+        HRR = ((timeCpu - tempQ[0]['AT']) + tempQ[0]['BT']) / tempQ[0]['BT']
+
+        for i in range(0, len(tempQ)):
+            responseRatio = ((timeCpu - tempQ[i]['AT']) + tempQ[i]['BT']) / tempQ[i]['BT']
 
             if responseRatio > HRR:
                 HRR = responseRatio
-                currProcess = readyQ.pop(i)
+                print(readyQ.pop(i))
 
-        
-    
 
 def Visualise(option, AT, BT):
     if option == "FCFS":
@@ -469,6 +468,8 @@ def Visualise(option, AT, BT):
         SJF(AT, BT)
     elif option == "RR":
         roundRobin(AT, BT, 2)
+    elif option == "HRRN":
+        HRRN(AT, BT)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
