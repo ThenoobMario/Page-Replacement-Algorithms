@@ -170,11 +170,11 @@ def SJF(AT, BT):
                     tempQ.append(process.pop(0))
 
             tempQ.sort(key=getBT)  # sorting acc to the burst time
-            lenghtQ = len(tempQ)
-            for i in range(0, lenghtQ):
+            lengthQ = len(tempQ)
+            for i in range(0, lengthQ):
                 readyQ.append(tempQ.pop(0))  # adding the sorted queue to readyqueue
 
-            # If Arrival time is greater than current CPU time ( in current time no processes have arrived)
+            # If Arrival time is greater than current CPU time (in current time no processes have arrived)
             if readyQ[0]['AT'] >= timeCpu:
                 timeCpu = readyQ[0]['AT']  # then we make the timeCpu such that the 0th process has arrived
 
@@ -191,8 +191,8 @@ def SJF(AT, BT):
                 tempQ.append(process.pop(0))
 
         tempQ.sort(key=getBT)  # Sorting acc to the burst time
-        lenghtQ = len(tempQ)
-        for i in range(0, lenghtQ):
+        lengthQ = len(tempQ)
+        for i in range(0, lengthQ):
             readyQ.append(tempQ.pop(0))  # Adding the sorted queue to ready queue
 
         processnum = currProcess["PID"]
@@ -394,6 +394,74 @@ def roundRobin(AT, BT, timeQ=2):
     plt.show()
     root.mainloop()
 
+def HRRN(AT, BT):
+    # Initialising time
+    timeCpu = 0
+    readyQ = []  # to check and store unfinished processes
+
+    yticks = []  # This is to store the bartick values
+    ytickL = []  # This is to store the bartick lables
+
+    barHeightVar = 1
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
+
+    PID = [" " for i in AT]
+
+    process = []
+
+    CT = [0 for _ in AT]
+    TAT = [0 for _ in AT]
+    WT = [0 for _ in AT]
+
+    AT = [int(i) for i in AT]
+    BT = [int(i) for i in BT]
+
+    # Making a list of Dictionaries
+    for i in range(len(AT)):
+        process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
+
+    while len(process) != 0 or len(readyQ) != 0:
+        if len(readyQ) == 0:
+            lenprocess = len(process)
+            tempQ = []
+            # entering all the processes that have arrived in the readyQ
+            for x in range(0, lenprocess):
+                if process[0]['AT'] <= timeCpu:
+                    tempQ.append(process.pop(0))
+            
+            lengthQ = len(tempQ)
+            for i in range(0, lengthQ):
+                readyQ.append(tempQ.pop(0))
+
+            if readyQ[0]['AT'] > timeCpu:
+                timeCpu = readyQ[0]['AT']
+
+        currProcess = readyQ.pop(0)
+
+        timeCpu += currProcess['BT']
+
+        lenprocess = len(process)
+        tempQ = []
+        # entering all the processes that have arrived in the readyQ
+        for x in range(0, lenprocess):
+            if process[0]['AT'] <= timeCpu:
+                tempQ.append(process.pop(0))
+        
+        HRR = ((timeCpu - readyQ[0]['AT']) + readyQ[0]['BT'])/readyQ[0]['BT']
+
+        for i in range():
+            responseRatio = ((timeCpu - readyQ[i]['AT']) + readyQ[i]['BT'])/readyQ[i]['BT']
+
+            if responseRatio > HRR:
+                HRR = responseRatio
+                currProcess = readyQ.pop(i)
+
+        
+    
 
 def Visualise(option, AT, BT):
     if option == "FCFS":
