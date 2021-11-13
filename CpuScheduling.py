@@ -131,7 +131,6 @@ def FCFS(AT, BT):
 
 def SJF(AT, BT):
     # Initialising time
-    timeCpu = 0
     readyQ = []  # to check and store unfinished processes
 
     yticks = []  # This is to store the bartick values
@@ -159,6 +158,9 @@ def SJF(AT, BT):
     for i in range(len(AT)):
         process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
 
+    # Initialising the CPU time
+    timeCpu = process[0]['AT']
+    
     # Checking if there are processes present
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
@@ -396,7 +398,6 @@ def roundRobin(AT, BT, timeQ=2):
 
 def HRRN(AT, BT):
     # Initialising time
-    timeCpu = 0
     readyQ = []  # to check and store unfinished processes
 
     yticks = []  # This is to store the bartick values
@@ -424,6 +425,8 @@ def HRRN(AT, BT):
     for i in range(len(AT)):
         process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
 
+    timeCpu = process[0]['AT']
+
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
             lenprocess = len(process)
@@ -433,11 +436,12 @@ def HRRN(AT, BT):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
 
+            print(tempQ)
             lengthQ = len(tempQ)
             for i in range(0, lengthQ):
                 readyQ.append(tempQ.pop(0))
 
-            if readyQ[0]['AT'] > timeCpu:
+            if readyQ[0]['AT'] >= timeCpu:
                 timeCpu = readyQ[0]['AT']
 
         currProcess = readyQ.pop(0)
