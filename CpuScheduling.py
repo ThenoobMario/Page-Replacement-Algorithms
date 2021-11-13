@@ -427,6 +427,7 @@ def HRRN(AT, BT):
 
     timeCpu = process[0]['AT']
 
+    # Initialising an index variable for readyQ
     Id = 0
 
     while len(process) != 0 or len(readyQ) != 0:
@@ -438,7 +439,6 @@ def HRRN(AT, BT):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
 
-            # print(tempQ)
             lengthQ = len(tempQ)
             for i in range(0, lengthQ):
                 readyQ.append(tempQ.pop(0))
@@ -446,35 +446,33 @@ def HRRN(AT, BT):
             if readyQ[0]['AT'] >= timeCpu:
                 timeCpu = readyQ[0]['AT']
 
-        if len(readyQ) != 0:
-            currProcess = readyQ.pop(Id)
-            timeCpu += currProcess['BT']
+        
+        currProcess = readyQ.pop(Id)
+        timeCpu += currProcess['BT']
 
         lenprocess = len(process)
-        tempQ = []
         # entering all the processes that have arrived in the readyQ
         for x in range(0, lenprocess):
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
+        
+        # Calculating the initial Response ratio and guarding it from null condition
+        if len(readyQ):
+            HRR = ((timeCpu - readyQ[0]['AT']) + readyQ[0]['BT']) / readyQ[0]['BT']
 
-        HRR = ((timeCpu - readyQ[0]['AT']) + readyQ[0]['BT']) / readyQ[0]['BT']
-        list_HRR=[]
         for i in range(0, len(readyQ)):
             responseRatio = ((timeCpu - readyQ[i]['AT']) + readyQ[i]['BT']) / readyQ[i]['BT']
-            list_HRR.append(responseRatio)
+
             print(responseRatio, HRR)
-            if responseRatio > HRR:
+            # Check if the response ratio is greater than or equal to initial value
+            if responseRatio >= HRR:
                 HRR = responseRatio
                 Id = i
-            print(readyQ[i])
-        # currProcess = readyQ.pop(Id)
-        # readyQ.sort(key= getHRR)
+            print(readyQ)
+
+        print(Id)
         processnum = currProcess['PID']
         finalnum = int(processnum[-1]) - 1
-
-
-def getHRR(e):
-    return e['HRR']
 
 
 def Visualise(option, AT, BT):
