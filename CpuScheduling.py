@@ -160,7 +160,7 @@ def SJF(AT, BT):
 
     # Initialising the CPU time
     timeCpu = process[0]['AT']
-    
+
     # Checking if there are processes present
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
@@ -446,7 +446,6 @@ def HRRN(AT, BT):
             if readyQ[0]['AT'] >= timeCpu:
                 timeCpu = readyQ[0]['AT']
 
-        
         currProcess = readyQ.pop(Id)
         timeCpu += currProcess['BT']
 
@@ -455,7 +454,7 @@ def HRRN(AT, BT):
         for x in range(0, lenprocess):
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
-        
+
         # Calculating the initial Response ratio and guarding it from null condition
         if len(readyQ):
             HRR = ((timeCpu - readyQ[0]['AT']) + readyQ[0]['BT']) / readyQ[0]['BT']
@@ -470,9 +469,62 @@ def HRRN(AT, BT):
                 Id = i
             print(readyQ)
 
+        processnum = currProcess["PID"]
+
+        finalNum = int(processnum[-1]) - 1
+        CT[finalNum] = timeCpu
+        PID[finalNum] = currProcess["PID"]
+        TAT[finalNum] = CT[finalNum] - AT[finalNum]
+        WT[finalNum] = TAT[finalNum] - BT[finalNum]
+
         print(Id)
-        processnum = currProcess['PID']
-        finalnum = int(processnum[-1]) - 1
+
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+
+    # Making a dataframe to sort the values based on processes
+    outTable = pd.DataFrame({'PROCESS': PID, 'AT': AT, 'BT': BT, 'CT': CT,
+                             'TAT': TAT, 'WT': WT})
+
+    PROCESS = list(outTable['PROCESS'])
+    AT = list(outTable['AT'])
+    BT = list(outTable['BT'])
+    CT = list(outTable['CT'])
+    TAT = list(outTable['TAT'])
+    WT = list(outTable['WT'])
+
+    for i in range(0, len(AT)):
+        lst.append([PROCESS[i], AT[i], BT[i],
+                    CT[i], TAT[i], WT[i]])  # to add all the values in a table
+        # Since SJF is Non-Preemptive, we can use RT and WT interchangeably
+        gnt.broken_barh([(WT[i] + AT[i], BT[i])], (barHeightVar, 2), facecolors='tab:blue')
+
+        yticks.append(barHeightVar + 1)
+
+        ytickL.append(PROCESS[i])
+
+        barHeightVar += 3
+
+        # Setting Y-axis limits 2 more than the list size
+    gnt.set_ylim(0, (len(AT) + 2) * 3)
+
+    # Setting X-axis limits last plus five
+    gnt.set_xlim(0, CT[-1] + 5)
+
+    # Setting ticks on y-axis
+    gnt.set_yticks(yticks)
+
+    # Labelling tickes of y-axis
+    gnt.set_yticklabels(ytickL)
+
+    # find total number of rows and
+    # columns in list
+    total_rows = len(lst)
+    total_columns = len(lst[0])
+
+    root = Tk()
+    t = Table(root, total_rows, total_columns, lst)
+    plt.show()
+    root.mainloop()
 
 
 def Visualise(option, AT, BT):
