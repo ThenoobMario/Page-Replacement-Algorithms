@@ -377,7 +377,7 @@ def roundRobin(AT, BT, timeQ=2):
     gnt.set_ylim(0, (len(AT) + 2) * 3)
 
     # Setting X-axis limits last plus five
-    gnt.set_xlim(0, CT[-1] + 5)
+    gnt.set_xlim(0, max(CT) + 5)
 
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
@@ -508,7 +508,138 @@ def HRRN(AT, BT):
     gnt.set_ylim(0, (len(AT) + 2) * 3)
 
     # Setting X-axis limits last plus five
-    gnt.set_xlim(0, CT[-1] + 5)
+    gnt.set_xlim(0, max(CT) + 5)
+
+    # Setting ticks on y-axis
+    gnt.set_yticks(yticks)
+
+    # Labelling tickes of y-axis
+    gnt.set_yticklabels(ytickL)
+
+    # find total number of rows and
+    # columns in list
+    total_rows = len(lst)
+    total_columns = len(lst[0])
+
+    root = Tk()
+    t = Table(root, total_rows, total_columns, lst)
+    plt.show()
+    root.mainloop()
+
+
+def LRRN(AT, BT):
+    # Initialising time
+    readyQ = []  # to check and store unfinished processes
+
+    yticks = []  # This is to store the bartick values
+    ytickL = []  # This is to store the bartick lables
+
+    barHeightVar = 1
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
+
+    PID = [" " for i in AT]
+
+    process = []
+
+    CT = [0 for _ in AT]
+    TAT = [0 for _ in AT]
+    WT = [0 for _ in AT]
+
+    AT = [int(i) for i in AT]
+    BT = [int(i) for i in BT]
+
+    # Making a list of Dictionaries
+    for i in range(len(AT)):
+        process.append({'PID': 'P{}'.format(i + 1), 'AT': AT[i], 'BT': BT[i]})
+
+    timeCpu = process[0]['AT']
+
+    # Initialising an index variable for readyQ
+    Id = 0
+
+    while len(process) != 0 or len(readyQ) != 0:
+        if len(readyQ) == 0:
+            lenprocess = len(process)
+            tempQ = []
+            # entering all the processes that have arrived in the readyQ
+            for x in range(0, lenprocess):
+                if process[0]['AT'] <= timeCpu:
+                    tempQ.append(process.pop(0))
+
+            lengthQ = len(tempQ)
+            for i in range(0, lengthQ):
+                readyQ.append(tempQ.pop(0))
+
+            if readyQ[0]['AT'] >= timeCpu:
+                timeCpu = readyQ[0]['AT']
+
+        currProcess = readyQ.pop(Id)
+        timeCpu += currProcess['BT']
+
+        lenprocess = len(process)
+        # entering all the processes that have arrived in the readyQ
+        for x in range(0, lenprocess):
+            if process[0]['AT'] <= timeCpu:
+                readyQ.append(process.pop(0))
+
+        # Calculating the initial Response ratio and guarding it from null condition
+        if len(readyQ):
+            HRR = ((timeCpu - readyQ[0]['AT']) + readyQ[0]['BT']) / readyQ[0]['BT']
+
+        for i in range(0, len(readyQ)):
+            responseRatio = ((timeCpu - readyQ[i]['AT']) + readyQ[i]['BT']) / readyQ[i]['BT']
+
+            print(responseRatio, HRR)
+            # Check if the response ratio is greater than or equal to initial value
+            if responseRatio <= HRR:
+                HRR = responseRatio
+                Id = i
+            print(readyQ)
+
+        processnum = currProcess["PID"]
+
+        finalNum = int(processnum[-1]) - 1
+        CT[finalNum] = timeCpu
+        PID[finalNum] = currProcess["PID"]
+        TAT[finalNum] = CT[finalNum] - AT[finalNum]
+        WT[finalNum] = TAT[finalNum] - BT[finalNum]
+
+        print(Id)
+
+    lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
+
+    # Making a dataframe to sort the values based on processes
+    outTable = pd.DataFrame({'PROCESS': PID, 'AT': AT, 'BT': BT, 'CT': CT,
+                             'TAT': TAT, 'WT': WT})
+
+    PROCESS = list(outTable['PROCESS'])
+    AT = list(outTable['AT'])
+    BT = list(outTable['BT'])
+    CT = list(outTable['CT'])
+    TAT = list(outTable['TAT'])
+    WT = list(outTable['WT'])
+
+    for i in range(0, len(AT)):
+        lst.append([PROCESS[i], AT[i], BT[i],
+                    CT[i], TAT[i], WT[i]])  # to add all the values in a table
+        # Since SJF is Non-Preemptive, we can use RT and WT interchangeably
+        gnt.broken_barh([(WT[i] + AT[i], BT[i])], (barHeightVar, 2), facecolors='tab:blue')
+
+        yticks.append(barHeightVar + 1)
+
+        ytickL.append(PROCESS[i])
+
+        barHeightVar += 3
+
+    # Setting Y-axis limits 2 more than the list size
+    gnt.set_ylim(0, (len(AT) + 2) * 3)
+
+    # Setting X-axis limits last plus five
+    gnt.set_xlim(0, max(CT) + 5)
 
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
@@ -536,6 +667,8 @@ def Visualise(option, AT, BT):
         roundRobin(AT, BT, 2)
     elif option == "HRRN":
         HRRN(AT, BT)
+    elif option == "LRRN":
+        LRRN(AT, BT)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
