@@ -9,3 +9,5 @@ This project is developed to better understand CPU scheduling algorithms by visu
 - HRRN
 - LRRN
 - STRF
+
+Pyhton based GUI using Tinker pandas matplotlib and other libraries for development.
