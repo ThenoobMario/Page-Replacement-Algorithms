@@ -2,11 +2,18 @@ from tkinter import *
 import pandas as pd
 import subprocess
 import random
+import numpy as np
+from multiprocessing import Process
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt2
+
+TATCollect = []
+CTCollect = []
+goodToGo = False
 
 
 def theory():
-    file1 = "python Theory.py"
+    file1 = "python TheoryCpu.py"
     # os.system(file1)
     p = subprocess.Popen(file1, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
@@ -26,7 +33,7 @@ class Table:
                 self.e.insert(END, lst[i][j])
 
 
-def FCFS(AT, BT):
+def FCFS(AT, BT, check=True):
     # All list of same size where same index represents qualities of one process
     CT = []  # Completion time or the time at which process is finished execution
     TAT = []  # CT - AT
@@ -114,6 +121,13 @@ def FCFS(AT, BT):
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
 
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        return
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -122,15 +136,14 @@ def FCFS(AT, BT):
     # columns in list
     total_rows = len(lst)
     total_columns = len(lst[0])
-
-    # create root window
     root = Tk()
+    # create root window
     t = Table(root, total_rows, total_columns, lst)
     plt.show()
     root.mainloop()
 
 
-def SJF(AT, BT):
+def SJF(AT, BT, check=True):
     # Initialising time
     readyQ = []  # to check and store unfinished processes
 
@@ -144,7 +157,7 @@ def SJF(AT, BT):
     gnt.set_xlabel('Time')
     gnt.set_ylabel('Processes')
 
-    PID = [" " for i in AT]
+    PID = [" " for _ in AT]
 
     process = []
 
@@ -220,6 +233,13 @@ def SJF(AT, BT):
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
 
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        return
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -260,7 +280,7 @@ def getBT(e):
     return e['BT']
 
 
-def roundRobin(AT, BT, timeQ=2):
+def roundRobin(AT, BT, timeQ=2, check=True):
     # Initialising time
     timeCpu = 0
     readyQ = []  # to check and store unfinished processes
@@ -356,6 +376,13 @@ def roundRobin(AT, BT, timeQ=2):
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
 
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        return
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -397,7 +424,7 @@ def roundRobin(AT, BT, timeQ=2):
     root.mainloop()
 
 
-def HRRN(AT, BT):
+def HRRN(AT, BT, check=True):
     # Initialising time
     readyQ = []  # to check and store unfinished processes
 
@@ -493,6 +520,13 @@ def HRRN(AT, BT):
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
 
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        return
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -528,7 +562,7 @@ def HRRN(AT, BT):
     root.mainloop()
 
 
-def LRRN(AT, BT):
+def LRRN(AT, BT, check=True):
     # Initialising time
     readyQ = []  # to check and store unfinished processes
 
@@ -624,6 +658,13 @@ def LRRN(AT, BT):
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
 
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        return
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -659,7 +700,7 @@ def LRRN(AT, BT):
     root.mainloop()
 
 
-def SRTF(AT, BT, timeQ=2):
+def SRTF(AT, BT, timeQ=2, check=True):
     # Initialising time
     timeCpu = 0
     readyQ = []  # to check and store unfinished processes
@@ -758,6 +799,14 @@ def SRTF(AT, BT, timeQ=2):
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
 
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        goodToGo = True
+        return
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -815,6 +864,66 @@ def Visualise(option, AT, BT):
         SRTF(AT, BT)
 
 
+def Compare(AT, BT):
+    # p1 = Process(target=FCFS(AT, BT, False))
+    # p1.start()
+    # p2 = Process(target=SJF(AT, BT, False))
+    # p2.start()
+    # p3 = Process(target=roundRobin(AT, BT, 2, False))
+    # p3.start()
+    # p4 = Process(target=HRRN(AT, BT, False))
+    # p4.start()
+    # p5 = Process(target=LRRN(AT, BT, False))
+    # p5.start()
+    # p6 = Process(target=SRTF(AT, BT, 2, False))
+    # p6.start()
+    FCFS(AT, BT, False)
+    SJF(AT, BT, False)
+    roundRobin(AT, BT, 2, False)
+    HRRN(AT, BT, False)
+    LRRN(AT, BT, False)
+    SRTF(AT, BT, 2, False)
+    print(TATCollect, CTCollect)
+
+    # barWidth = 0.25
+    # fig = plt2.subplots(figsize=(12, 8))
+    #
+    # # Set position of bar on X axis
+    # br1 = np.arange(len(TATCollect))
+    # br2 = [x + barWidth for x in br1]
+    #
+    # # Make the plot
+    # plt2.bar(br1, TATCollect, color='r', width=barWidth,
+    #          edgecolor='grey', label='TAT')
+    # plt2.bar(br2, CTCollect, color='g', width=barWidth,
+    #          edgecolor='grey', label='CT')
+    # abc = plt.subplot
+    #
+    # # Adding Xticks
+    # plt2.xlabel('Time', fontweight='bold', fontsize=15)
+    # plt2.ylabel('ALGOS', fontweight='bold', fontsize=15)
+    # plt2.xticks([r + barWidth for r in range(len(TATCollect))],
+    #             ['FCFS', 'SJF', 'RR', 'HRRN', 'LRRN', 'SRTF'])
+    # plt2.legend()
+    # plt2.show()
+
+    plotdata = pd.DataFrame({
+
+        "TAT": TATCollect,
+
+        "CT": CTCollect},
+
+        index=["FCFS", "SJF", "RR", "HRRN", 'LRRN', 'SRTF'])
+
+    plotdata.plot(kind="bar", figsize=(15, 8))
+
+    plt.title("Avg TAT and CT comparision")
+
+    plt.xlabel("Algorithms")
+
+    plt.ylabel("Avg times")
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Main Page
 Menu = Tk()
@@ -855,8 +964,9 @@ L5 = Button(F1, borderwidth="0", text="Visualise", bg="#e8e8e8", fg="green", fon
             command=lambda: Visualise(variable.get(), ATList.get().split(" "), BTList.get().split(" "))).pack(pady="25")
 
 L6 = Button(F1, borderwidth="0", text="Compare All Algorithms", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-            activeforeground="black", activebackground="#bbbfca").pack()
-# command=lambda: graph(ATList.get(), BTList.get()))
+            activeforeground="black", activebackground="#bbbfca",
+            command=lambda: Compare(ATList.get().split(" "), BTList.get().split(" "))
+            ).pack(pady="25")
 
 L7 = Button(F1, borderwidth="0", text="Theory", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca", command=theory).pack(pady="25")
