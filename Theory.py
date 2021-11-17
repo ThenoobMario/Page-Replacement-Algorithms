@@ -66,29 +66,6 @@ def six():
     photo_root.mainloop()
 
 
-def seven():
-    photo_root = Toplevel()
-    photo_root.title("FCFS")
-    photo_root.geometry("1698x843")
-    photo_root.resizable(False, False)
-    photo = PhotoImage(file="Theory/Fcfs.PNG")
-    photo_label = Label(photo_root, image=photo)
-    photo_label.pack()
-    photo_root.mainloop()
-
-
-def eight():
-    photo_root = Toplevel()
-    photo_root.title("SJF")
-    photo_root.geometry("1739×868")
-    photo_root.resizable(False, False)
-    photo = PhotoImage(file="Theory/Capture.PNG")
-    photo_label = Label(photo_root, image=photo)
-    photo_label.pack()
-    photo_root.mainloop()
-
-
-
 # -----------------------------------------------------------------------------------------------------------------------
 # Home Pag
 Menu = Tk()
@@ -116,10 +93,6 @@ Button5 = Button(f1, text="Optimal PRA", borderwidth="0", bg="#e8e8e8", fg="gree
                  activeforeground="black", activebackground="#bbbfca", command=five).pack()
 Button6 = Button(f1, text="Random PRA", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
                  activeforeground="black", activebackground="#bbbfca", command=six).pack()
-button7 = Button(f1, text="FCFS", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-                 activeforeground="black", activebackground="#bbbfca", command=seven).pack()
-button8 = Button(f1, text="SJF", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-                 activeforeground="black", activebackground="#bbbfca", command=seven).pack()
 Button9 = Button(f1, text="Back", borderwidth="0", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
                  activeforeground="black", activebackground="#bbbfca", command=Menu.destroy).pack()
 Menu.mainloop()
