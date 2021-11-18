@@ -11,7 +11,6 @@ CTCollect = []
 
 def theory():
     file1 = "python TheoryCpu.py"
-    # os.system(file1)
     p = subprocess.Popen(file1, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
 
