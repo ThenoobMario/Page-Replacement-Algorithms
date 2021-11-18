@@ -1,5 +1,6 @@
 from tkinter import *
 
+
 def one():
     photo_root = Toplevel()
     photo_root.title("FIFO Theory")

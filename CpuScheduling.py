@@ -3,13 +3,10 @@ import pandas as pd
 import subprocess
 import random
 import numpy as np
-from multiprocessing import Process
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt2
 
-TATCollect = []
+TATCollect = []  # Global variables declared to store values of TAT & CT from all algorithms
 CTCollect = []
-goodToGo = False
 
 
 def theory():
@@ -59,11 +56,12 @@ def FCFS(AT, BT, check=True):
     ytickL = []  # This is to store the bartick lables
 
     barHeightVar = 1
-    fig, gnt = plt.subplots()
+    if check:
+        fig, gnt = plt.subplots()
 
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
+        # Setting labels for x-axis and y-axis
+        gnt.set_xlabel('Time')
+        gnt.set_ylabel('Processes')
 
     for i in range(0, len(AT)):
         # to make up for idle CPU time
@@ -80,7 +78,8 @@ def FCFS(AT, BT, check=True):
         WT.append(TAT[i] - BT[i])
 
         # print(AT[i], BT[i])
-        gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
+        if check:
+            gnt.broken_barh([(storeThis, BT[i])], (barHeightVar, 2), facecolors='tab:blue')  # here we want startingTime
         # of process (storeThis) + The time taken for the process (BT)
 
         yticks.append(
@@ -89,6 +88,13 @@ def FCFS(AT, BT, check=True):
         ytickL.append("P{}".format(PID[i] + 1))  # formatting to show P1,P2,P3...
 
         barHeightVar += 3  # thickness is 2 and extra 1 for spacing
+
+    if not check:
+        avgTAT = sum(TAT) / len(TAT)
+        TATCollect.append(avgTAT)
+        avgCT = sum(CT) / len(CT)
+        CTCollect.append(avgCT)
+        return
 
     print(CT, TAT, WT)
 
@@ -101,10 +107,10 @@ def FCFS(AT, BT, check=True):
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
 
-    # Labelling tickes of y-axis
+    # Labelling ticks of y-axis
     gnt.set_yticklabels(ytickL)
 
-    # variables for table: Process number-ytickL , AT, BT, CT, TAT , WT in the same order.
+    # variables for table: Process number- y tick L , AT, BT, CT, TAT , WT in the same order.
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
@@ -120,13 +126,6 @@ def FCFS(AT, BT, check=True):
     CT = list(outTable['CT'])
     TAT = list(outTable['TAT'])
     WT = list(outTable['WT'])
-
-    if not check:
-        avgTAT = sum(TAT) / len(TAT)
-        TATCollect.append(avgTAT)
-        avgCT = sum(CT) / len(CT)
-        CTCollect.append(avgCT)
-        return
 
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
@@ -151,11 +150,6 @@ def SJF(AT, BT, check=True):
     ytickL = []  # This is to store the bartick lables
 
     barHeightVar = 1
-    fig, gnt = plt.subplots()
-
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
 
     PID = [" " for _ in AT]
 
@@ -178,17 +172,17 @@ def SJF(AT, BT, check=True):
     # Checking if there are processes present
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
-            lenprocess = len(process)
+            lenProcess = len(process)
             tempQ = []
             # entering all the processes that have arrived in the readyQ
-            for x in range(0, lenprocess):
+            for x in range(0, lenProcess):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
 
             tempQ.sort(key=getBT)  # sorting acc to the burst time
             lengthQ = len(tempQ)
             for i in range(0, lengthQ):
-                readyQ.append(tempQ.pop(0))  # adding the sorted queue to readyqueue
+                readyQ.append(tempQ.pop(0))  # adding the sorted queue to ready queue
 
             # If Arrival time is greater than current CPU time (in current time no processes have arrived)
             if readyQ[0]['AT'] >= timeCpu:
@@ -199,10 +193,10 @@ def SJF(AT, BT, check=True):
 
         timeCpu += currProcess['BT']
 
-        lenprocess = len(process)
+        lenProcess = len(process)
         tempQ = []
         # entering all the processes that have arrived in the readyQ
-        for x in range(0, lenprocess):
+        for x in range(0, lenProcess):
             if process[0]['AT'] <= timeCpu:
                 tempQ.append(process.pop(0))
 
@@ -211,9 +205,9 @@ def SJF(AT, BT, check=True):
         for i in range(0, lengthQ):
             readyQ.append(tempQ.pop(0))  # Adding the sorted queue to ready queue
 
-        processnum = currProcess["PID"]
+        processNum = currProcess["PID"]
 
-        finalNum = int(processnum[-1]) - 1
+        finalNum = int(processNum[-1]) - 1
         CT[finalNum] = timeCpu
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
@@ -240,6 +234,12 @@ def SJF(AT, BT, check=True):
         CTCollect.append(avgCT)
         return
 
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
+
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
                     CT[i], TAT[i], WT[i]])  # to add all the values in a table
@@ -262,7 +262,7 @@ def SJF(AT, BT, check=True):
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
 
-    # Labelling tickes of y-axis
+    # Labelling ticks of y-axis
     gnt.set_yticklabels(ytickL)
 
     # find total number of rows and
@@ -298,13 +298,7 @@ def roundRobin(AT, BT, timeQ=2, check=True):
         else:
             barHeightList.append(barHeightList[i - 1] + 3)
 
-    fig, gnt = plt.subplots()
-
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
-
-    PID = [" " for i in AT]
+    PID = [" " for _ in AT]
 
     process = []
 
@@ -343,9 +337,9 @@ def roundRobin(AT, BT, timeQ=2, check=True):
             timeCpu += timeQ
             currProcess['BT'] -= timeQ
 
-        lenprocess = len(process)
+        lenProcess = len(process)
         # getting all the arrived processes in the readyQ
-        for x in range(0, lenprocess):
+        for x in range(0, lenProcess):
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
 
@@ -353,9 +347,9 @@ def roundRobin(AT, BT, timeQ=2, check=True):
         if currProcess['BT'] != 0:
             readyQ.append(currProcess)
 
-        processnum = currProcess["PID"]
+        processNum = currProcess["PID"]
 
-        finalNum = int(processnum[-1]) - 1  # To extract the process number from the name p1 -> 0 p2-> 1 etc
+        finalNum = int(processNum[-1]) - 1  # To extract the process number from the name p1 -> 0 p2-> 1 etc
         CT[finalNum] = timeCpu
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
@@ -382,6 +376,12 @@ def roundRobin(AT, BT, timeQ=2, check=True):
         avgCT = sum(CT) / len(CT)
         CTCollect.append(avgCT)
         return
+
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
 
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
@@ -410,7 +410,7 @@ def roundRobin(AT, BT, timeQ=2, check=True):
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
 
-    # Labelling tickes of y-axis
+    # Labelling ticks of y-axis
     gnt.set_yticklabels(ytickL)
 
     # find total number of rows and
@@ -432,13 +432,8 @@ def HRRN(AT, BT, check=True):
     ytickL = []  # This is to store the bartick lables
 
     barHeightVar = 1
-    fig, gnt = plt.subplots()
 
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
-
-    PID = [" " for i in AT]
+    PID = [" " for _ in AT]
 
     process = []
 
@@ -460,10 +455,10 @@ def HRRN(AT, BT, check=True):
 
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
-            lenprocess = len(process)
+            lenProcess = len(process)
             tempQ = []
             # entering all the processes that have arrived in the readyQ
-            for x in range(0, lenprocess):
+            for x in range(0, lenProcess):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
 
@@ -477,9 +472,9 @@ def HRRN(AT, BT, check=True):
         currProcess = readyQ.pop(Id)
         timeCpu += currProcess['BT']
 
-        lenprocess = len(process)
+        lenProcess = len(process)
         # entering all the processes that have arrived in the readyQ
-        for x in range(0, lenprocess):
+        for x in range(0, lenProcess):
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
 
@@ -497,9 +492,9 @@ def HRRN(AT, BT, check=True):
                 Id = i
             print(readyQ)
 
-        processnum = currProcess["PID"]
+        processNum = currProcess["PID"]
 
-        finalNum = int(processnum[-1]) - 1
+        finalNum = int(processNum[-1]) - 1
         CT[finalNum] = timeCpu
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
@@ -526,6 +521,12 @@ def HRRN(AT, BT, check=True):
         avgCT = sum(CT) / len(CT)
         CTCollect.append(avgCT)
         return
+
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
 
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
@@ -548,7 +549,7 @@ def HRRN(AT, BT, check=True):
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
 
-    # Labelling tickes of y-axis
+    # Labelling ticks of y-axis
     gnt.set_yticklabels(ytickL)
 
     # find total number of rows and
@@ -570,13 +571,8 @@ def LRRN(AT, BT, check=True):
     ytickL = []  # This is to store the bartick lables
 
     barHeightVar = 1
-    fig, gnt = plt.subplots()
 
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
-
-    PID = [" " for i in AT]
+    PID = [" " for _ in AT]
 
     process = []
 
@@ -598,10 +594,10 @@ def LRRN(AT, BT, check=True):
 
     while len(process) != 0 or len(readyQ) != 0:
         if len(readyQ) == 0:
-            lenprocess = len(process)
+            lenProcess = len(process)
             tempQ = []
             # entering all the processes that have arrived in the readyQ
-            for x in range(0, lenprocess):
+            for x in range(0, lenProcess):
                 if process[0]['AT'] <= timeCpu:
                     tempQ.append(process.pop(0))
 
@@ -615,9 +611,9 @@ def LRRN(AT, BT, check=True):
         currProcess = readyQ.pop(Id)
         timeCpu += currProcess['BT']
 
-        lenprocess = len(process)
+        lenProcess = len(process)
         # entering all the processes that have arrived in the readyQ
-        for x in range(0, lenprocess):
+        for x in range(0, lenProcess):
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
 
@@ -635,9 +631,9 @@ def LRRN(AT, BT, check=True):
                 Id = i
             print(readyQ)
 
-        processnum = currProcess["PID"]
+        processNum = currProcess["PID"]
 
-        finalNum = int(processnum[-1]) - 1
+        finalNum = int(processNum[-1]) - 1
         CT[finalNum] = timeCpu
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
@@ -664,6 +660,11 @@ def LRRN(AT, BT, check=True):
         avgCT = sum(CT) / len(CT)
         CTCollect.append(avgCT)
         return
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
 
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
@@ -686,7 +687,7 @@ def LRRN(AT, BT, check=True):
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
 
-    # Labelling tickes of y-axis
+    # Labelling ticks of y-axis
     gnt.set_yticklabels(ytickL)
 
     # find total number of rows and
@@ -717,12 +718,6 @@ def SRTF(AT, BT, timeQ=2, check=True):
             barHeightList.append(1)
         else:
             barHeightList.append(barHeightList[i - 1] + 3)
-
-    fig, gnt = plt.subplots()
-
-    # Setting labels for x-axis and y-axis
-    gnt.set_xlabel('Time')
-    gnt.set_ylabel('Processes')
 
     PID = [" " for i in AT]
 
@@ -764,9 +759,9 @@ def SRTF(AT, BT, timeQ=2, check=True):
             timeCpu += timeQ
             currProcess['BT'] -= timeQ
 
-        lenprocess = len(process)
+        lenProcess = len(process)
         # getting all the arrived processes in the readyQ
-        for x in range(0, lenprocess):
+        for x in range(0, lenProcess):
             if process[0]['AT'] <= timeCpu:
                 readyQ.append(process.pop(0))
 
@@ -774,9 +769,9 @@ def SRTF(AT, BT, timeQ=2, check=True):
         if currProcess['BT'] != 0:
             readyQ.append(currProcess)
 
-        processnum = currProcess["PID"]
+        processNum = currProcess["PID"]
 
-        finalNum = int(processnum[-1]) - 1  # To extract the process number from the name p1 -> 0 p2-> 1 etc
+        finalNum = int(processNum[-1]) - 1  # To extract the process number from the name p1 -> 0 p2-> 1 etc
         CT[finalNum] = timeCpu
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
@@ -804,8 +799,13 @@ def SRTF(AT, BT, timeQ=2, check=True):
         TATCollect.append(avgTAT)
         avgCT = sum(CT) / len(CT)
         CTCollect.append(avgCT)
-        goodToGo = True
         return
+
+    fig, gnt = plt.subplots()
+
+    # Setting labels for x-axis and y-axis
+    gnt.set_xlabel('Time')
+    gnt.set_ylabel('Processes')
 
     for i in range(0, len(AT)):
         lst.append([PROCESS[i], AT[i], BT[i],
@@ -835,7 +835,7 @@ def SRTF(AT, BT, timeQ=2, check=True):
     # Setting ticks on y-axis
     gnt.set_yticks(yticks)
 
-    # Labelling tickes of y-axis
+    # Labelling ticks of y-axis
     gnt.set_yticklabels(ytickL)
 
     # find total number of rows and
@@ -865,18 +865,6 @@ def Visualise(option, AT, BT):
 
 
 def Compare(AT, BT):
-    # p1 = Process(target=FCFS(AT, BT, False))
-    # p1.start()
-    # p2 = Process(target=SJF(AT, BT, False))
-    # p2.start()
-    # p3 = Process(target=roundRobin(AT, BT, 2, False))
-    # p3.start()
-    # p4 = Process(target=HRRN(AT, BT, False))
-    # p4.start()
-    # p5 = Process(target=LRRN(AT, BT, False))
-    # p5.start()
-    # p6 = Process(target=SRTF(AT, BT, 2, False))
-    # p6.start()
     FCFS(AT, BT, False)
     SJF(AT, BT, False)
     roundRobin(AT, BT, 2, False)
@@ -885,43 +873,26 @@ def Compare(AT, BT):
     SRTF(AT, BT, 2, False)
     print(TATCollect, CTCollect)
 
-    # barWidth = 0.25
-    # fig = plt2.subplots(figsize=(12, 8))
-    #
-    # # Set position of bar on X axis
-    # br1 = np.arange(len(TATCollect))
-    # br2 = [x + barWidth for x in br1]
-    #
-    # # Make the plot
-    # plt2.bar(br1, TATCollect, color='r', width=barWidth,
-    #          edgecolor='grey', label='TAT')
-    # plt2.bar(br2, CTCollect, color='g', width=barWidth,
-    #          edgecolor='grey', label='CT')
-    # abc = plt.subplot
-    #
-    # # Adding Xticks
-    # plt2.xlabel('Time', fontweight='bold', fontsize=15)
-    # plt2.ylabel('ALGOS', fontweight='bold', fontsize=15)
-    # plt2.xticks([r + barWidth for r in range(len(TATCollect))],
-    #             ['FCFS', 'SJF', 'RR', 'HRRN', 'LRRN', 'SRTF'])
-    # plt2.legend()
-    # plt2.show()
+    barWidth = 0.25
+    fig = plt.subplots(figsize=(10, 6))
 
-    plotdata = pd.DataFrame({
+    # Set position of bar on X axis
+    br1 = np.arange(len(TATCollect))
+    br2 = [x + barWidth for x in br1]
 
-        "TAT": TATCollect,
+    # Make the plot
+    plt.bar(br1, TATCollect, color='r', width=barWidth,
+            edgecolor='grey', label='TAT')
+    plt.bar(br2, CTCollect, color='g', width=barWidth,
+            edgecolor='grey', label='CT')
 
-        "CT": CTCollect},
-
-        index=["FCFS", "SJF", "RR", "HRRN", 'LRRN', 'SRTF'])
-
-    plotdata.plot(kind="bar", figsize=(15, 8))
-
-    plt.title("Avg TAT and CT comparision")
-
-    plt.xlabel("Algorithms")
-
-    plt.ylabel("Avg times")
+    # Adding Xticks
+    plt.xlabel('Time', fontweight='bold', fontsize=15)
+    plt.ylabel('ALGOS', fontweight='bold', fontsize=15)
+    plt.xticks([r + barWidth for r in range(len(TATCollect))],
+               ['FCFS', 'SJF', 'RR', 'HRRN', 'LRRN', 'SRTF'])
+    plt.legend()
+    plt.show()
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -966,10 +937,10 @@ L5 = Button(F1, borderwidth="0", text="Visualise", bg="#e8e8e8", fg="green", fon
 L6 = Button(F1, borderwidth="0", text="Compare All Algorithms", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca",
             command=lambda: Compare(ATList.get().split(" "), BTList.get().split(" "))
-            ).pack(pady="25")
+            ).pack(pady="5")
 
 L7 = Button(F1, borderwidth="0", text="Theory", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
-            activeforeground="black", activebackground="#bbbfca", command=theory).pack(pady="25")
+            activeforeground="black", activebackground="#bbbfca", command=theory).pack(pady="10")
 
 L8 = Button(F1, borderwidth="0", text="Back", bg="#e8e8e8", fg="green", font=("Century Gothic", 18),
             activeforeground="black", activebackground="#bbbfca", command=Menu.destroy).pack()
