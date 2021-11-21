@@ -95,8 +95,6 @@ def FCFS(AT, BT, check=True):
         CTCollect.append(avgCT)
         return
 
-    print(CT, TAT, WT)
-
     # Setting Y-axis limits 2 more than the list size
     gnt.set_ylim(0, (len(AT) + 2) * 3)
 
@@ -211,8 +209,7 @@ def SJF(AT, BT, check=True):
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
         WT[finalNum] = TAT[finalNum] - BT[finalNum]
-        print(readyQ)
-        print(CT, TAT, WT)
+ 
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
@@ -354,8 +351,6 @@ def roundRobin(AT, BT, timeQ=2, check=True):
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
         WT[finalNum] = TAT[finalNum] - BT[finalNum]
 
-        print(readyQ)
-        print(CT, TAT, WT)
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
@@ -484,12 +479,10 @@ def HRRN(AT, BT, check=True):
         for i in range(0, len(readyQ)):
             responseRatio = ((timeCpu - readyQ[i]['AT']) + readyQ[i]['BT']) / readyQ[i]['BT']
 
-            print(responseRatio, HRR)
             # Check if the response ratio is greater than or equal to initial value
             if responseRatio >= HRR:
                 HRR = responseRatio
                 Id = i
-            print(readyQ)
 
         processNum = currProcess["PID"]
 
@@ -498,8 +491,6 @@ def HRRN(AT, BT, check=True):
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
         WT[finalNum] = TAT[finalNum] - BT[finalNum]
-
-        print(Id)
 
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
@@ -628,7 +619,6 @@ def LRRN(AT, BT, check=True):
             if responseRatio <= HRR:
                 HRR = responseRatio
                 Id = i
-            print(readyQ)
 
         processNum = currProcess["PID"]
 
@@ -637,8 +627,6 @@ def LRRN(AT, BT, check=True):
         PID[finalNum] = currProcess["PID"]
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
         WT[finalNum] = TAT[finalNum] - BT[finalNum]
-
-        print(Id)
 
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
@@ -743,7 +731,6 @@ def SRTF(AT, BT, timeQ=2, check=True):
                 timeCpu = readyQ[0]['AT']
 
         # Getting the active process
-        # readyQ.sort(key=getBT)
         currProcess = readyQ.pop(0)
         # If Burst Time is less than Time quantum
         if currProcess['BT'] <= timeQ:
@@ -776,10 +763,8 @@ def SRTF(AT, BT, timeQ=2, check=True):
         TAT[finalNum] = CT[finalNum] - AT[finalNum]
         WT[finalNum] = TAT[finalNum] - BT[finalNum]
 
-        print(readyQ)
         readyQ.sort(key=getBT)
-        print(readyQ)
-        # print(CT, TAT, WT)
+
     lst = [('PROCESS', 'AT', 'BT', 'CT', 'TAT', 'WT')]
 
     # Making a dataframe to sort the values based on processes
