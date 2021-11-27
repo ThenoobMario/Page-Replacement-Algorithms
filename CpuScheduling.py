@@ -897,7 +897,7 @@ L2 = Label(F1, text="Choose Algorithm:", font=("Century Gothic", 18)).pack(pady=
 
 variable = StringVar()
 variable.set("FCFS")  # default value
-dropDown = OptionMenu(F1, variable, "FCFS", "SJF", "RR", "HRRN", "SRTF", "LRRN", "Priority")
+dropDown = OptionMenu(F1, variable, "FCFS", "SJF", "RR", "HRRN", "SRTF", "LRRN")
 dropDown.configure(borderwidth="0", width="12", bg="#e8e8e8", fg="green", font=("Century Gothic", 12),
                    activeforeground="black", activebackground="#bbbfca")
 dropDown.pack(pady="5")
